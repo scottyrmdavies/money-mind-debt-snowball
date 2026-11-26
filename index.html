@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Debt Snowball Calculator — See Your Debt-Free Date | Money Mind Audit</title>
+  <meta name="description" content="Free debt snowball calculator. List your debts, add an extra payment, and see your payoff order, each debt's payoff month, your debt-free date, and the interest you save versus paying minimums. Nothing you enter leaves your browser.">
+  <meta name="theme-color" content="#1C1C1C">
+  <!-- OG_URL: replace https://money-mind-debt-snowball.vercel.app with the live address before publishing (see README.md). -->
+  <link rel="canonical" href="https://money-mind-debt-snowball.vercel.app">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Money Mind Audit">
+  <meta property="og:title" content="Debt Snowball Calculator — See Your Debt-Free Date">
+  <meta property="og:description" content="List your debts, add what extra you can pay, and get your payoff order and the month you're debt-free. Free, no signup, nothing leaves your browser.">
+  <meta property="og:url" content="https://money-mind-debt-snowball.vercel.app">
+  <meta property="og:image" content="https://money-mind-debt-snowball.vercel.app/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Debt Snowball Calculator by Money Mind Audit: see your debt-free date">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Debt Snowball Calculator — See Your Debt-Free Date">
+  <meta name="twitter:description" content="Your payoff order, each debt's payoff month, and your debt-free date. Free, no signup.">
+  <meta name="twitter:image" content="https://money-mind-debt-snowball.vercel.app/og.png">
+  <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="preload" href="Anton-Regular.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#calculator">Skip to calculator</a>
+
+  <div class="page">
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <div class="brand-lockup">
+        <p class="brand">Money Mind Audit</p>
+        <p class="brand-sub">Money psychology · USA · Nothing leaves this page</p>
+      </div>
+      <img class="logo" src="mark.png" width="64" height="64" alt="Money Mind Audit stamp">
+    </div>
+  </header>
+
+  <main>
+    <section class="intro wrap">
+      <p class="eyebrow">Free calculator · Debt snowball</p>
+      <h1>When are you<br><span class="hl"><span class="hl-txt">debt-free</span></span>?</h1>
+      <p class="lede">List what you owe, add whatever extra you can put toward it each month, and see the order your debts fall, the month each one hits $0, and the date the last one does.</p>
+    </section>
+
+    <section id="calculator" class="wrap calc" aria-labelledby="calc-heading">
+      <h2 id="calc-heading" class="visually-hidden">Calculator</h2>
+
+      <form id="calc-form" action="#" method="get" novalidate>
+        <fieldset class="panel">
+          <legend class="panel-title">Your debts</legend>
+          <p class="hint panel-intro">Three examples are filled in. Type over them with your own numbers from your latest statements. Leave the balance blank to skip a row.</p>
+
+          <div id="debt-rows" class="debt-rows"></div>
+
+          <div class="row-actions">
+            <button type="button" class="btn-ghost" id="add-debt">+ Add a debt</button>
+            <button type="button" class="btn-link" id="reset-example">Reset to examples</button>
+          </div>
+        </fieldset>
+
+        <fieldset class="panel">
+          <legend class="panel-title">Your snowball</legend>
+          <div class="field">
+            <label for="extra">Extra payment each month</label>
+            <div class="input-shell">
+              <span class="affix prefix" aria-hidden="true">$</span>
+              <input id="extra" name="extra" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" data-money="true" value="100" aria-describedby="extra-hint">
+              <span class="affix suffix" aria-hidden="true">/ month</span>
+            </div>
+            <p id="extra-hint" class="hint">On top of your minimums. Even $25 moves the date. Be honest about what you can keep up every month.</p>
+            <a class="jump" href="#plan">See your plan ↓</a>
+          </div>
+        </fieldset>
+      </form>
+
+      <div class="results" id="plan" aria-live="polite" aria-atomic="false">
+        <div class="panel results-panel" data-state="empty">
+          <h2 class="panel-title">Your plan</h2>
+          <p class="empty-msg" id="empty-msg">Enter at least one debt with a balance to see your debt-free date.</p>
+
+          <div class="results-body" id="results-body" hidden>
+            <ul class="warnings" id="out-warnings" hidden></ul>
+
+            <div class="result-hero">
+              <p class="result-label" id="out-label">Debt-free in</p>
+              <p class="result-figure" id="out-date">—</p>
+              <p class="result-sub" id="out-sub"></p>
+            </div>
+
+            <dl class="result-list">
+              <div><dt>Total months</dt><dd id="out-months">—</dd></div>
+              <div><dt>Total interest paid</dt><dd id="out-interest">—</dd></div>
+              <div><dt>Paid each month, all-in</dt><dd id="out-budget">—</dd></div>
+            </dl>
+
+            <div class="compare">
+              <p class="result-label">Versus paying only the minimums</p>
+              <div id="out-compare"></div>
+            </div>
+
+            <h3 class="sub-title">Payoff order</h3>
+            <ol class="order" id="out-order"></ol>
+
+            <h3 class="sub-title">Timeline</h3>
+            <div class="timeline" id="out-timeline" role="img"></div>
+            <div class="tl-axis" id="out-axis" aria-hidden="true"></div>
+
+            <p class="fine">Smallest balance first. Interest is added monthly (balance × APR ÷ 12) before each payment. When a debt hits $0, its minimum rolls into the next one. Month 1 is next month. Real statements differ a little: daily interest, fees, and rate changes aren’t modeled.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap why" aria-labelledby="why-heading">
+      <h2 id="why-heading" class="sub-title">Why smallest first, when the math says highest rate first?</h2>
+      <p>Paying the highest APR first (the “avalanche”) usually costs less interest. The snowball trades a little of that for something most plans run out of by month three: proof it’s working. Clearing a whole balance early frees up a minimum payment and gives you a win you can see. If you’re the kind of person who stops opening statements when it gets hard, the plan you’ll actually stick with beats the cheaper one you’ll abandon.</p>
+    </section>
+
+    <section class="cta-band" aria-labelledby="cta-heading">
+      <div class="wrap cta-inner">
+        <p class="eyebrow">Money Mind Audit Workbook · $27</p>
+        <h2 id="cta-heading">The date is the easy part. Keeping going is the hard part.</h2>
+        <p class="cta-copy">The workbook is 30 fillable pages for the stuff a calculator can’t see: where your money habits came from, every debt and bill on one page, snowball vs. avalanche worked through on a real US example, scripts for calling a creditor, and a 30-day reset built for people who’ve quit budgets before.</p>
+        <a class="btn-cta" href="https://payhip.com/b/Vf9jC">Get the workbook — $27</a>
+        <p class="cta-fine">Instant PDF download · 30 pages, fillable · Educational only, not financial advice</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <p>Nothing you type is sent anywhere. Your numbers are saved only in this browser so they’re here next time. Clear them with “Reset to examples.”</p>
+      <p>Educational only. Not financial, credit, or legal advice. Results are estimates; your lender’s numbers are the real ones. If you’re behind on payments, a nonprofit credit counselor (NFCC.org) can help for free or low cost.</p>
+      <p class="footer-brand">Money Mind Audit</p>
+    </div>
+  </footer>
+  </div>
+
+  <template id="debt-row-template">
+    <div class="debt-row" role="group">
+      <div class="debt-row-head">
+        <p class="debt-row-title">Debt</p>
+        <button type="button" class="btn-remove">Remove</button>
+      </div>
+      <div class="debt-grid">
+        <div class="field f-name">
+          <label data-label="name">Name</label>
+          <input type="text" data-field="name" autocomplete="off" spellcheck="false" placeholder="e.g. Store card">
+        </div>
+        <div class="field">
+          <label data-label="balance">Balance</label>
+          <div class="input-shell">
+            <span class="affix prefix" aria-hidden="true">$</span>
+            <input type="text" data-field="balance" data-money="true" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="2,500">
+          </div>
+        </div>
+        <div class="field">
+          <label data-label="minimum">Minimum / mo</label>
+          <div class="input-shell">
+            <span class="affix prefix" aria-hidden="true">$</span>
+            <input type="text" data-field="minimum" data-money="true" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="75">
+          </div>
+        </div>
+        <div class="field">
+          <label data-label="apr">APR</label>
+          <div class="input-shell">
+            <input type="text" data-field="apr" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="22.9">
+            <span class="affix suffix" aria-hidden="true">%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
